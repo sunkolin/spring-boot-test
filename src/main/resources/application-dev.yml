@@ -24,3 +24,5 @@ starfish:
     secret-key: OZGbQ31lTGptvH1Io6Wc5wfKfwvMxuQvuOZA3TtZ
     bucket-name: my-bucket-dev
     expire: 3600
+logging:
+  delay-initialization: true
