@@ -11,6 +11,7 @@ spring:
     password: 123456789
   data:
     redis:
+      client-type: jedis
       host: sunkolin.xyz
       port: 6379
       password: Jz2AFn5*Hp8&Sw3!Qe6$Lx9^Ar4@Bt7%Cy1wVk0
