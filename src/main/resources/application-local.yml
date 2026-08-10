@@ -25,3 +25,17 @@ starfish:
     secret-key: OZGbQ31lTGptvH1Io6Wc5wfKfwvMxuQvuOZA3TtZ
     bucket-name: my-bucket-dev
     expire: 3600
+
+xxl:
+  job:
+    enabled: true
+    admin:
+      addresses: http://xxx.com/eop/xxl-job-admin
+    accessToken: 123456
+    executor:
+      appname: spring-boot4-test
+      address: http://127.0.0.1:{server.port}/{server.servlet.context-path}
+      ip:
+      port: -1
+      logpath: ./log/xxl-job/jobhandler
+      logretentiondays: 30

@@ -11,7 +11,7 @@ import org.springframework.boot.context.properties.ConfigurationProperties;
  * @since 2021-07-02
  */
 @Data
-@ConfigurationProperties(prefix = "starfish.xxl.job")
+@ConfigurationProperties(prefix = "xxl.job")
 public class XxlJobProperties {
 
     /**

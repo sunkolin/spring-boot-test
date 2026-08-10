@@ -1,6 +1,5 @@
 package com.starfish.test.config;
 
-import com.starfish.common.task.XxlJobProperties;
 import com.xxl.job.core.executor.impl.XxlJobSpringExecutor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
