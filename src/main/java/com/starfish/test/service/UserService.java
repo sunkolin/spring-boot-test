@@ -1,7 +1,8 @@
 package com.starfish.test.service;
 
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
-import com.starfish.core.context.User;
+//import com.starfish.core.context.User;
+import com.starfish.test.context.User;
 import com.starfish.test.entity.UserEntity;
 
 /**
@@ -18,14 +19,14 @@ public interface UserService {
      *
      * @param userEntity 用户
      */
-    Long register(UserEntity userEntity);
+//    Long register(UserEntity userEntity);
 
     /**
      * 登录
      *
      * @param userEntity 用户
      */
-    User login(UserEntity userEntity);
+//    User login(UserEntity userEntity);
 
     /**
      * 登录

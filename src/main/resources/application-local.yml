@@ -30,7 +30,7 @@ xxl:
   job:
     enabled: true
     admin:
-      addresses: http://xxx.com/eop/xxl-job-admin
+      addresses: http://127.0.0.1:8888
     accessToken: 123456
     executor:
       appname: spring-boot4-test

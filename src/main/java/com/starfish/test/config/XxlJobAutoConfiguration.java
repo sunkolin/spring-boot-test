@@ -7,6 +7,7 @@ import org.springframework.boot.autoconfigure.AutoConfiguration;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
 
 /**
  * TaskAutoConfiguration
@@ -16,8 +17,8 @@ import org.springframework.context.annotation.Bean;
  * @since 2015-08-03
  */
 @Slf4j
-@AutoConfiguration
-@ConditionalOnProperty(value = {"starfish.xxl.job.enabled"}, havingValue = "true")
+@Configuration
+@ConditionalOnProperty(value = {"xxl.job.enabled"}, havingValue = "true")
 @EnableConfigurationProperties({XxlJobProperties.class})
 public class XxlJobAutoConfiguration {
 

@@ -3,11 +3,11 @@ package com.starfish.test.service.impl;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
-import com.starfish.experiment.jwt.JsonWebTokens;
+//import com.starfish.experiment.jwt.JsonWebTokens;
 import com.starfish.test.context.User;
 import com.starfish.test.entity.UserEntity;
-import com.starfish.test.enumeration.ResultEnum;
-import com.starfish.core.exception.CustomException;
+//import com.starfish.test.enumeration.ResultEnum;
+//import com.starfish.core.exception.CustomException;
 import com.starfish.test.mapper.UserMapper;
 import com.starfish.test.service.UserService;
 import lombok.extern.slf4j.Slf4j;
@@ -39,43 +39,43 @@ public class UserServiceImpl implements UserService {
 //    @Autowired
 //    private StringRedisTemplate stringRedisTemplate;
 
-    @Override
-    public Long register(UserEntity userEntity) {
-        // 查询用户是否已经注册过
-        UserEntity param = new UserEntity();
-        param.setMobile(userEntity.getMobile());
-        UserEntity result = userMapper.selectOne(new QueryWrapper<>(param));
-        if (result != null) {
-            log.error("UserServiceImpl register fail,mobile already register,mobile={},userId={}", userEntity.getMobile(), result.getId());
-            throw new CustomException(ResultEnum.ALREADY_REGISTER);
-        }
-
-        userMapper.insert(userEntity);
-        return userEntity.getId();
-    }
-
-    @Override
-    public User login(UserEntity userEntity) {
-        UserEntity param = new UserEntity();
-        param.setMobile(userEntity.getMobile());
-        param.setPassword(userEntity.getPassword());
-        UserEntity result = userMapper.selectOne(new QueryWrapper<>(param));
-        if (result == null) {
-            log.error("UserServiceImpl login fail.mobile={},password={}", userEntity.getMobile(), userEntity.getPassword());
-            throw new CustomException(ResultEnum.LOGIN_FAIL);
-        }
-        log.info("UserServiceImpl login success.mobile={},password={}", userEntity.getMobile(), userEntity.getPassword());
-
-        // 生成 token
-        User user = new User();
-        Long userId = result.getId();
-        user.setUserId(userId);
-        user.setNickName(result.getNickName());
-        user.setLastLoginTime(new Date());
-        String token = JsonWebTokens.create(userId, user);
-        user.setToken(token);
-        return user;
-    }
+//    @Override
+//    public Long register(UserEntity userEntity) {
+//        // 查询用户是否已经注册过
+//        UserEntity param = new UserEntity();
+//        param.setMobile(userEntity.getMobile());
+//        UserEntity result = userMapper.selectOne(new QueryWrapper<>(param));
+//        if (result != null) {
+//            log.error("UserServiceImpl register fail,mobile already register,mobile={},userId={}", userEntity.getMobile(), result.getId());
+//            throw new CustomException(ResultEnum.ALREADY_REGISTER);
+//        }
+//
+//        userMapper.insert(userEntity);
+//        return userEntity.getId();
+//    }
+//
+//    @Override
+//    public User login(UserEntity userEntity) {
+//        UserEntity param = new UserEntity();
+//        param.setMobile(userEntity.getMobile());
+//        param.setPassword(userEntity.getPassword());
+//        UserEntity result = userMapper.selectOne(new QueryWrapper<>(param));
+//        if (result == null) {
+//            log.error("UserServiceImpl login fail.mobile={},password={}", userEntity.getMobile(), userEntity.getPassword());
+//            throw new CustomException(ResultEnum.LOGIN_FAIL);
+//        }
+//        log.info("UserServiceImpl login success.mobile={},password={}", userEntity.getMobile(), userEntity.getPassword());
+//
+//        // 生成 token
+//        User user = new User();
+//        Long userId = result.getId();
+//        user.setUserId(userId);
+//        user.setNickName(result.getNickName());
+//        user.setLastLoginTime(new Date());
+//        String token = JsonWebTokens.create(userId, user);
+//        user.setToken(token);
+//        return user;
+//    }
 
     @Override
     public void logout(UserEntity userEntity) {

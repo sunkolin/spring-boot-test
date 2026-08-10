@@ -14,8 +14,8 @@ import java.util.Date;
  * @since 2015-05-08
  */
 @Data
-@EqualsAndHashCode(callSuper = true)
-public class User extends com.starfish.core.context.User {
+//@EqualsAndHashCode(callSuper = true)
+public class User  {//extends com.starfish.core.context.User {
 
     /**
      * 最后登录成功时间
