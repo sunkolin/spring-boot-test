@@ -9,12 +9,12 @@ spring:
     url: jdbc:mysql://172.17.112.58:3306/starfish?characterEncoding=UTF-8&serverTimezone=Asia/Shanghai&autoReconnect=true
     username: starfish
     password: De8Ce6Ew8JBC6HhM
-  data:
-    redis:
-      client-type: jedis
-      host: sunkolin.xyz
-      port: 6379
-      password: Jz2AFn5*Hp8&Sw3!Qe6$Lx9^Ar4@Bt7%Cy1wVk0
+#  data:
+#    redis:
+#      client-type: jedis
+#      host: sunkolin.xyz
+#      port: 6379
+#      password: Jz2AFn5*Hp8&Sw3!Qe6$Lx9^Ar4@Bt7%Cy1wVk0
 
 # minio
 starfish:
