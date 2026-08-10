@@ -30,11 +30,11 @@ xxl:
   job:
     enabled: true
     admin:
-      addresses: http://127.0.0.1:8888
+      addresses: http://127.0.0.1:8888/xxl-job-admin
     accessToken: 123456
     executor:
       appname: spring-boot4-test
-      address: http://127.0.0.1:{server.port}/{server.servlet.context-path}
+      address: http://127.0.0.1:${server.port}/${server.servlet.context-path}
       ip:
       port: -1
       logpath: ./log/xxl-job/jobhandler
