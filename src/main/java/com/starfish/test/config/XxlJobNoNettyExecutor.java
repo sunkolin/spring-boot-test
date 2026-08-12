@@ -6,8 +6,8 @@ import com.xxl.job.core.biz.client.AdminBizClient;
 import com.xxl.job.core.biz.impl.ExecutorBizImpl;
 import com.xxl.job.core.executor.XxlJobExecutor;
 import com.xxl.job.core.glue.GlueFactory;
+import com.xxl.job.core.handler.IJobHandler;
 import com.xxl.job.core.handler.annotation.XxlJob;
-import com.xxl.job.core.handler.impl.MethodJobHandler;
 import com.xxl.job.core.log.XxlJobFileAppender;
 import com.xxl.job.core.thread.ExecutorRegistryThread;
 import com.xxl.job.core.thread.JobLogFileCleanThread;
@@ -34,65 +34,16 @@ import java.util.Map;
 import java.util.concurrent.ConcurrentMap;
 
 @Slf4j
-public class XxlJobNoNettyExecutor implements ApplicationContextAware, SmartInitializingSingleton,
-        ApplicationListener<ApplicationReadyEvent>, DisposableBean {
+public class XxlJobNoNettyExecutor extends XxlJobExecutor implements ApplicationContextAware,
+        SmartInitializingSingleton, ApplicationListener<ApplicationReadyEvent>, DisposableBean {
 
-    private String adminAddresses;
-    private String accessToken;
-    private String appname;
-    private String address;
-    private String ip;
-    private int port;
-    private String logPath;
-    private int logRetentionDays;
-
-    private ExecutorBiz executorBiz;
-    private ApplicationContext applicationContext;
+    private static ApplicationContext applicationContext;
     private volatile boolean started = false;
-
-    public void setAdminAddresses(String adminAddresses) {
-        this.adminAddresses = adminAddresses;
-    }
-
-    public void setAccessToken(String accessToken) {
-        this.accessToken = accessToken;
-    }
-
-    public void setAppname(String appname) {
-        this.appname = appname;
-    }
-
-    public void setAddress(String address) {
-        this.address = address;
-    }
-
-    public void setIp(String ip) {
-        this.ip = ip;
-    }
-
-    public void setPort(int port) {
-        this.port = port;
-    }
-
-    public void setLogPath(String logPath) {
-        this.logPath = logPath;
-    }
-
-    public void setLogRetentionDays(int logRetentionDays) {
-        this.logRetentionDays = logRetentionDays;
-    }
-
-    public String getAccessToken() {
-        return accessToken;
-    }
-
-    public ExecutorBiz getExecutorBiz() {
-        return executorBiz;
-    }
+    private ExecutorBiz executorBiz;
 
     @Override
     public void setApplicationContext(ApplicationContext applicationContext) throws BeansException {
-        this.applicationContext = applicationContext;
+        XxlJobNoNettyExecutor.applicationContext = applicationContext;
     }
 
     @Override
@@ -116,13 +67,13 @@ public class XxlJobNoNettyExecutor implements ApplicationContextAware, SmartInit
         }
 
         Environment env = event.getApplicationContext().getEnvironment();
-        String serverPort = env.getProperty("server.port", "8080");
+        int serverPort = Integer.parseInt(env.getProperty("server.port", "8080"));
         String contextPath = env.getProperty("server.servlet.context-path", "");
 
         log.info(">>>>>>>>>>> xxl-job (no-netty) application ready, serverPort={}, contextPath={}", serverPort, contextPath);
 
         try {
-            start(Integer.parseInt(serverPort), contextPath);
+            start(serverPort, contextPath);
         } catch (Exception e) {
             log.error(">>>>>>>>>>> xxl-job (no-netty) start failed.", e);
             throw new RuntimeException(e);
@@ -130,9 +81,17 @@ public class XxlJobNoNettyExecutor implements ApplicationContextAware, SmartInit
     }
 
     public void start(int serverPort, String contextPath) throws Exception {
+        String adminAddresses = getField("adminAddresses");
+        String accessToken = getField("accessToken");
+        String appname = getField("appname");
+        String address = getField("address");
+        String ip = getField("ip");
+        String logPath = getField("logPath");
+        int logRetentionDays = getFieldInt("logRetentionDays");
+
         XxlJobFileAppender.initLogPath(logPath);
 
-        initAdminBizList();
+        initAdminBizList(adminAddresses, accessToken);
 
         JobLogFileCleanThread.getInstance().start(logRetentionDays);
 
@@ -154,12 +113,24 @@ public class XxlJobNoNettyExecutor implements ApplicationContextAware, SmartInit
             resolvedAddress = "http://" + resolvedIp + ":" + serverPort + contextPathStr + "/";
         }
 
+        if (accessToken == null || accessToken.trim().length() == 0) {
+            log.warn(">>>>>>>>>>> xxl-job accessToken is empty. To ensure system security, please set the accessToken.");
+        }
+
         ExecutorRegistryThread.getInstance().start(appname, resolvedAddress);
 
         log.info(">>>>>>>>>>> xxl-job executor (no-netty) start success, address={}", resolvedAddress);
     }
 
-    private void initAdminBizList() throws Exception {
+    public ExecutorBiz getExecutorBiz() {
+        return executorBiz;
+    }
+
+    public String getAccessToken() {
+        return getField("accessToken");
+    }
+
+    private void initAdminBizList(String adminAddresses, String accessToken) throws Exception {
         if (adminAddresses != null && adminAddresses.trim().length() > 0) {
             List<AdminBiz> adminBizList = new ArrayList<AdminBiz>();
             for (String addr : adminAddresses.trim().split(",")) {
@@ -170,6 +141,26 @@ public class XxlJobNoNettyExecutor implements ApplicationContextAware, SmartInit
             Field field = XxlJobExecutor.class.getDeclaredField("adminBizList");
             field.setAccessible(true);
             field.set(null, adminBizList);
+        }
+    }
+
+    private String getField(String name) {
+        try {
+            Field f = XxlJobExecutor.class.getDeclaredField(name);
+            f.setAccessible(true);
+            return (String) f.get(this);
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    private int getFieldInt(String name) {
+        try {
+            Field f = XxlJobExecutor.class.getDeclaredField(name);
+            f.setAccessible(true);
+            return (int) f.get(this);
+        } catch (Exception e) {
+            throw new RuntimeException(e);
         }
     }
 
@@ -206,48 +197,8 @@ public class XxlJobNoNettyExecutor implements ApplicationContextAware, SmartInit
         }
     }
 
-    private void registJobHandler(XxlJob xxlJob, Object bean, Method executeMethod) {
-        if (xxlJob == null) {
-            return;
-        }
-
-        String name = xxlJob.value();
-        if (name.trim().length() == 0) {
-            throw new RuntimeException("xxl-job method-jobhandler name invalid, for[" + bean.getClass() + "#" + executeMethod.getName() + "] .");
-        }
-        if (XxlJobExecutor.loadJobHandler(name) != null) {
-            throw new RuntimeException("xxl-job jobhandler[" + name + "] naming conflicts.");
-        }
-
-        executeMethod.setAccessible(true);
-
-        Method initMethod = null;
-        Method destroyMethod = null;
-
-        if (xxlJob.init().trim().length() > 0) {
-            try {
-                initMethod = bean.getClass().getDeclaredMethod(xxlJob.init());
-                initMethod.setAccessible(true);
-            } catch (NoSuchMethodException e) {
-                throw new RuntimeException("xxl-job method-jobhandler initMethod invalid, for[" + bean.getClass() + "#" + executeMethod.getName() + "] .");
-            }
-        }
-        if (xxlJob.destroy().trim().length() > 0) {
-            try {
-                destroyMethod = bean.getClass().getDeclaredMethod(xxlJob.destroy());
-                destroyMethod.setAccessible(true);
-            } catch (NoSuchMethodException e) {
-                throw new RuntimeException("xxl-job method-jobhandler destroyMethod invalid, for[" + bean.getClass() + "#" + executeMethod.getName() + "] .");
-            }
-        }
-
-        XxlJobExecutor.registJobHandler(name, new MethodJobHandler(bean, executeMethod, initMethod, destroyMethod));
-    }
-
     @Override
     public void destroy() {
-        ExecutorRegistryThread.getInstance().toStop();
-
         try {
             Field jobThreadRepoField = XxlJobExecutor.class.getDeclaredField("jobThreadRepository");
             jobThreadRepoField.setAccessible(true);
@@ -255,7 +206,7 @@ public class XxlJobNoNettyExecutor implements ApplicationContextAware, SmartInit
             ConcurrentMap<Integer, JobThread> jobThreadRepository = (ConcurrentMap<Integer, JobThread>) jobThreadRepoField.get(null);
             if (jobThreadRepository != null && jobThreadRepository.size() > 0) {
                 for (Map.Entry<Integer, JobThread> item : jobThreadRepository.entrySet()) {
-                    JobThread oldJobThread = XxlJobExecutor.removeJobThread(item.getKey(), "web container destroy and kill the job.");
+                    JobThread oldJobThread = removeJobThread(item.getKey(), "web container destroy and kill the job.");
                     if (oldJobThread != null) {
                         try {
                             oldJobThread.join();
@@ -269,7 +220,7 @@ public class XxlJobNoNettyExecutor implements ApplicationContextAware, SmartInit
 
             Field jobHandlerRepoField = XxlJobExecutor.class.getDeclaredField("jobHandlerRepository");
             jobHandlerRepoField.setAccessible(true);
-            Map<String, ?> jobHandlerRepository = (Map<String, ?>) jobHandlerRepoField.get(null);
+            Map<String, IJobHandler> jobHandlerRepository = (Map<String, IJobHandler>) jobHandlerRepoField.get(null);
             if (jobHandlerRepository != null) {
                 jobHandlerRepository.clear();
             }
