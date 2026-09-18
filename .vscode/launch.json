@@ -15,7 +15,7 @@
             "name": "Application",
             "request": "launch",
             "mainClass": "com.starfish.test.Application",
-            "projectName": "spring-boot4-test",
+            "projectName": "spring-boot-test",
             "env": {
                 "JAVA_OPTS": "-Xms256m -Xmx1024m",
                 "SPRING_PROFILES_ACTIVE": "local"

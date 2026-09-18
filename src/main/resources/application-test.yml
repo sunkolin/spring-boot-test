@@ -3,7 +3,7 @@ server:
 
 spring:
   application:
-    name: spring-boot4-test
+    name: spring-boot-test
   datasource:
     driverClassName: com.mysql.cj.jdbc.Driver
     url: jdbc:mysql://172.17.112.58:3306/starfish?characterEncoding=UTF-8&serverTimezone=Asia/Shanghai&autoReconnect=true

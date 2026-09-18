@@ -1,7 +1,7 @@
 #!/bin/bash
 
 # 环境变量
-export APP_NAME=spring-boot4-test
+export APP_NAME=spring-boot-test
 export APP_PORT=6005
 export APP_VERSION=1.0.0
 export APP_ENV=dev

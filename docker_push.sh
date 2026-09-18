@@ -1,7 +1,7 @@
 #!/bin/bash
 
 # 变量
-export APP_NAME=spring-boot4-test
+export APP_NAME=spring-boot-test
 export APP_VERSION=1.0.0
 
 # 打包

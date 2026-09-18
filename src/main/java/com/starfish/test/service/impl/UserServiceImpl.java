@@ -96,7 +96,7 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public UserEntity getUser(Long userId) {
-        String key = "starfish:spring-boot4-test:" + userId;
+        String key = "starfish:spring-boot-test:" + userId;
         if (redisTemplate.hasKey(key)) {
             Object result = redisTemplate.opsForValue().get(key);
             return result != null ? (UserEntity) result : null;
