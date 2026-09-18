@@ -30,5 +30,5 @@ jobs:
         context: .
         push: true
         tags: |
-          ${{ secrets.DOCKERHUB_USERNAME }}/open-icon-repository:latest
-          ${{ secrets.DOCKERHUB_USERNAME }}/open-icon-repository:${{ env.APP_VERSION }}
+          ${{ secrets.DOCKERHUB_USERNAME }}/spring-boot-test:latest
+          ${{ secrets.DOCKERHUB_USERNAME }}/spring-boot-test:${{ env.APP_VERSION }}
