@@ -49,6 +49,9 @@ public class UserServiceImpl implements UserService {
             log.error("UserServiceImpl register fail,mobile already register,mobile={},userId={}", userEntity.getMobile(), result.getId());
             throw new CustomException(ResultEnum.ALREADY_REGISTER);
         }
+        param.setCreateTime(new Date());
+        param.setUpdateTime(new Date());
+        param.setRemark("");
 
         userMapper.insert(userEntity);
         return userEntity.getId();
@@ -91,6 +94,7 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public void update(UserEntity userEntity) {
+        userEntity.setUpdateTime(new Date());
         userMapper.updateById(userEntity);
     }
 
