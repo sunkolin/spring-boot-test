@@ -6,7 +6,7 @@ spring:
     name: spring-boot-test
   datasource:
     driverClassName: com.mysql.cj.jdbc.Driver
-    url: jdbc:mysql://172.17.112.58:3306/starfish?characterEncoding=UTF-8&serverTimezone=Asia/Shanghai&autoReconnect=true
+    url: jdbc:mysql://8.141.81.187:3306/starfish?characterEncoding=UTF-8&serverTimezone=Asia/Shanghai&autoReconnect=true
     username: starfish
     password: De8Ce6Ew8JBC6HhM
   data:
