@@ -9,7 +9,6 @@ import com.starfish.core.exception.CustomException;
 import com.starfish.core.model.Result;
 import com.starfish.test.entity.UserEntity;
 import com.starfish.test.enumeration.ResultEnum;
-import com.starfish.test.param.DeleteUserParam;
 import com.starfish.test.param.GetUserParam;
 import com.starfish.test.param.UpdateUserParam;
 import com.starfish.test.service.UserService;
