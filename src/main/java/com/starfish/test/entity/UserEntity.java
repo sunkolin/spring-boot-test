@@ -1,5 +1,6 @@
 package com.starfish.test.entity;
 
+import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
@@ -13,7 +14,7 @@ import java.util.Date;
 @TableName("t_user")
 public class UserEntity implements Serializable {
 
-    @TableId
+    @TableId(type = IdType.AUTO)
     private Long id;
 
     private String mobile;
