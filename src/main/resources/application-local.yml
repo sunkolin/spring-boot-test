@@ -14,13 +14,3 @@ spring:
       host: sunkolin.xyz
       port: 6379
       password: Jz2AFn5*Hp8&Sw3!Qe6$Lx9^Ar4@Bt7%Cy1wVk0
-
-# minio
-starfish:
-  minio:
-    enabled: false
-    endpoint: https://sunkolin.xyz:9000
-    access-key: yLYYn14VnYcdLyOnOY12
-    secret-key: OZGbQ31lTGptvH1Io6Wc5wfKfwvMxuQvuOZA3TtZ
-    bucket-name: my-bucket-dev
-    expire: 3600

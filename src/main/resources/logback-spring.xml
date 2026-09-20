@@ -60,7 +60,7 @@
     <root level="INFO">
         <appender-ref ref="CONSOLE_LOG"/>
         <appender-ref ref="FILE_LOG"/>
-<!--        <appender-ref ref="JSON_LOG"/>-->
+        <appender-ref ref="JSON_LOG"/>
     </root>
 
 </configuration>
