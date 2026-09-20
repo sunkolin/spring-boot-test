@@ -49,9 +49,9 @@ public class UserServiceImpl implements UserService {
             log.error("UserServiceImpl register fail,mobile already register,mobile={},userId={}", userEntity.getMobile(), result.getId());
             throw new CustomException(ResultEnum.ALREADY_REGISTER);
         }
-        param.setCreateTime(new Date());
-        param.setUpdateTime(new Date());
-        param.setRemark("");
+        userEntity.setCreateTime(new Date());
+        userEntity.setUpdateTime(new Date());
+        userEntity.setRemark("");
 
         userMapper.insert(userEntity);
         return userEntity.getId();
