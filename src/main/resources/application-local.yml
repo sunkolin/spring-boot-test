@@ -10,6 +10,6 @@ spring:
     password: 123456789
   data:
     redis:
-      host: sunkolin.xyz
+      host: 8.141.81.187
       port: 6379
-      password: Jz2AFn5*Hp8&Sw3!Qe6$Lx9^Ar4@Bt7%Cy1wVk0
+      password: redis_mejHMG
