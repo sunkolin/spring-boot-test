@@ -35,7 +35,7 @@ public class UserManageController {
      * @param param 参数
      * @return 用户列表
      */
-    @RequireLogin(false)
+    @RequireLogin
     @PostMapping("/api/user/list")
     public Result<Page<UserEntity>> list(@RequestBody ListUserParam param) {
         Long pageNumber = param.getPageNumber();
