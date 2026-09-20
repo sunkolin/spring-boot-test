@@ -12,6 +12,6 @@ import lombok.Data;
 @Data
 public class DeleteUserParam {
 
-    private Long userId;
+    private Long id;
 
 }

@@ -78,6 +78,7 @@ public class UserController {
         return Result.success(user);
     }
 
+    @RequireLogin
     @PostMapping("/api/user/logout")
     public Result<String> logout() {
         // 退出
@@ -91,15 +92,17 @@ public class UserController {
     }
 
     /**
-     * 注销接口
+     * 查询用户个人信息
      * @param param 参数
      * @return 结果
      */
-    @PostMapping("/api/user/delete")
-    public Result<Page<UserEntity>> delete(@RequestBody DeleteUserParam param) {
-        Long userId = param.getUserId();
-        userService.delete(userId);
-        return Result.success();
+    @Operation(summary = "查询用户接口", description = "查询用户接口")
+    @PostMapping("/api/user/get")
+    public Result<UserEntity> get(@RequestBody GetUserParam param) {
+        Long userId = param.getId();
+        log.info("UserController getUser.userId={}", userId);
+        UserEntity userEntity = userService.getUser(userId);
+        return Result.success(userEntity);
     }
 
     /**
@@ -113,20 +116,6 @@ public class UserController {
         BeanUtils.copyProperties(param, userEntity);
         userService.update(userEntity);
         return Result.success();
-    }
-
-    /**
-     * 查询用户个人信息
-     * @param param 参数
-     * @return 结果
-     */
-    @Operation(summary = "查询用户接口", description = "查询用户接口")
-    @PostMapping("/api/user/get")
-    public Result<UserEntity> get(@RequestBody GetUserParam param) {
-        Long userId = param.getUserId();
-        log.info("UserController getUser.userId={}", userId);
-        UserEntity userEntity = userService.getUser(userId);
-        return Result.success(userEntity);
     }
 
 }

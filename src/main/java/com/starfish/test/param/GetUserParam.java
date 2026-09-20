@@ -12,6 +12,6 @@ import lombok.Data;
 @Data
 public class GetUserParam {
 
-    private Long userId;
+    private Long id;
 
 }

@@ -1,6 +1,6 @@
 package com.starfish.test.interceptor;
 
-import com.starfish.core.annotation.RequireToken;
+import com.starfish.core.annotation.RequireLogin;
 import com.starfish.core.context.UserContext;
 import com.starfish.core.exception.CustomException;
 import com.starfish.experiment.jwt.JsonWebTokens;
@@ -42,8 +42,8 @@ public class LoginInterceptor implements HandlerInterceptor {
         //  只要没有Login注解就不需要验证token
         HandlerMethod handlerMethod = (HandlerMethod) handler;
         Method method = handlerMethod.getMethod();
-        RequireToken requireLogin = method.getAnnotation(RequireToken.class);
-        if (requireLogin == null || !requireLogin.value()) {
+        RequireLogin requireLogin = method.getAnnotation(RequireLogin.class);
+        if (requireLogin != null && !requireLogin.value()) {
             return true;
         }
 
