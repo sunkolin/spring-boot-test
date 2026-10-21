@@ -1,4 +1,4 @@
-FROM debian:12-slim
+FROM ubuntu:24.04
 
 LABEL maintainer="sunkolin <sunkolin@qq.com>"
 
@@ -6,7 +6,7 @@ LABEL maintainer="sunkolin <sunkolin@qq.com>"
 ENV DEBIAN_FRONTEND=noninteractive
 
 # 替换阿里云源
-RUN sed -i 's/deb.debian.org/mirrors.aliyun.com/g' /etc/apt/sources.list.d/debian.sources
+RUN sed -i 's|archive.ubuntu.com|mirrors.aliyun.com|g' /etc/apt/sources.list
 
 # 设置时区
 ENV TZ=Asia/Shanghai
