@@ -22,9 +22,11 @@ jobs:
         distribution: 'temurin'
         cache: 'maven'
         server-id: github
-        settings-path: ${{ github.workspace }}
+        settings-path: ${{ github.workspace }}/.mvn
 
     - name: Build with Maven
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       run: mvn clean install -Dmaven.test.skip=true
 
     - name: Set up Docker Buildx
