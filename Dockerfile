@@ -39,4 +39,4 @@ WORKDIR /app
 COPY target/*.jar /app/
 
 # 启动
-CMD ["bash", "-c", "java -Xms1g -Xmx2g -jar /app/app.jar --spring.profiles.active=${APP_ENV:-dev} --server.port=${APP_PORT:-8080}"]
+CMD ["bash", "-c", "java -Xms1g -Xmx2g -jar /app/*.jar --spring.profiles.active=${APP_ENV:-dev} --server.port=${APP_PORT:-8080}"]
