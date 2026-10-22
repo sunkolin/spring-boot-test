@@ -36,7 +36,7 @@ ENV PATH=$PATH:$JAVA_HOME/bin
 
 # 部署应用
 WORKDIR /app
-COPY target/spring-boot-test-1.0.0-SNAPSHOT.jar /app/app.jar
+COPY target/*.jar /app/
 
 # 启动
 CMD ["bash", "-c", "java -Xms1g -Xmx2g -jar /app/app.jar --spring.profiles.active=${APP_ENV:-dev} --server.port=${APP_PORT:-8080}"]
