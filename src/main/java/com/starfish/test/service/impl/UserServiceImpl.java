@@ -17,7 +17,9 @@ import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.stereotype.Service;
 
 import java.time.Duration;
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 
 /**
  * UserService
@@ -119,6 +121,16 @@ public class UserServiceImpl implements UserService {
         LambdaQueryWrapper<UserEntity> wrapper = new LambdaQueryWrapper<>();
         wrapper.ge(UserEntity::getId, 1L);
         wrapper.orderByAsc(UserEntity::getId);
+
+        List<UserEntity> list = new ArrayList<>();
+        for (int i = 0;i<10;i++){
+            LambdaQueryWrapper<UserEntity> lambdaQueryWrapper = new LambdaQueryWrapper<>();
+            lambdaQueryWrapper.eq(UserEntity::getId, i);
+            UserEntity e = userMapper.selectOne(lambdaQueryWrapper);
+            list.add(e);
+        }
+        System.out.println(list);
+
         return userMapper.selectPage(page, wrapper);
     }
 

@@ -3,6 +3,7 @@ package com.starfish.test.controller;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.google.common.base.Strings;
 import com.starfish.core.annotation.RequireLogin;
+import com.starfish.core.annotation.RequireToken;
 import com.starfish.core.context.User;
 import com.starfish.core.context.UserContext;
 import com.starfish.core.exception.CustomException;
@@ -109,6 +110,7 @@ public class UserController {
      * @param param 参数
      * @return 结果
      */
+    @RequireLogin(false)
     @PostMapping("/api/user/update")
     public Result<Page<UserEntity>> update(@RequestBody UpdateUserParam param) {
         UserEntity userEntity = new UserEntity();
