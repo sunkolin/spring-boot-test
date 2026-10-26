@@ -17,20 +17,20 @@ public class UserEntity implements Serializable {
     @TableId(type = IdType.AUTO)
     private Long id;
 
+    private String email;
+
     private String mobile;
 
     private String password;
 
-    @TableField("nick_name")
-    private String nickName;
+    @TableField("nickname")
+    private String nickname;
 
-    @TableField("user_name")
+    @TableField("username")
     private String username;
 
-    @TableField("full_name")
-    private String fullName;
-
-    private String email;
+    @TableField("real_name")
+    private String realName;
 
     private Integer sex;
 
