@@ -73,7 +73,7 @@ public class UserServiceImpl implements UserService {
         User user = new User();
         Long userId = result.getId();
         user.setUserId(userId);
-        user.setNickName(result.getNickName());
+        user.setNickName(result.getNickname());
         user.setLastLoginTime(new Date());
         String token = JsonWebTokens.create(userId, user);
         user.setToken(token);
