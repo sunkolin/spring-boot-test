@@ -11,17 +11,17 @@ public class UpdateUserParam implements Serializable {
 
     private Long id;
 
+    private String mail;
+
     private String mobile;
 
     private String password;
 
-    private String nickName;
+    private String nickname;
 
     private String username;
 
-    private String fullName;
-
-    private String email;
+    private String realName;
 
     private Integer sex;
 
