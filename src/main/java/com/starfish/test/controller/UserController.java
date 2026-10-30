@@ -8,6 +8,8 @@ import com.starfish.core.context.UserContext;
 import com.starfish.core.exception.CustomException;
 import com.starfish.core.model.Result;
 import com.starfish.test.entity.UserEntity;
+import com.starfish.test.entity.UserModelUseGetSet;
+import com.starfish.test.entity.UserModelUseLomBok;
 import com.starfish.test.enumeration.ResultEnum;
 import com.starfish.test.param.GetUserParam;
 import com.starfish.test.param.UpdateUserParam;
@@ -115,6 +117,52 @@ public class UserController {
         BeanUtils.copyProperties(param, userEntity);
         userService.update(userEntity);
         return Result.success();
+    }
+
+
+
+    /**
+     * 查询用户个人信息
+     * @return 结果
+     */
+    @RequireLogin(false)
+    @Operation(summary = "查询用户接口", description = "查询用户接口")
+    @PostMapping("/api/user/selectUserUseLombok")
+    public Result<UserModelUseLomBok> select(@RequestBody UserModelUseLomBok userModelUseLomBok) {
+        log.info("UserController select.userModelUseLomBok={}", userModelUseLomBok);
+        UserModelUseLomBok u= new UserModelUseLomBok();
+//        u.setId(1L);
+//        u.setAname("a");
+//
+//        // lombok和idea自动生成的set方法不一样。TODO
+//        u.setBName("b");
+//
+//        u.setCname("c");
+//        u.setDName("d");
+        u.setISCar(true);
+        u.isISCar();
+        return Result.success(u);
+    }
+
+    /**
+     * 查询用户个人信息
+     * @return 结果
+     */
+    @RequireLogin(false)
+    @Operation(summary = "查询用户接口", description = "查询用户接口")
+    @PostMapping("/api/user/selectUserModelUseGetSet")
+    public Result<UserModelUseGetSet> selectUserModelUseGetSelect() {
+        UserModelUseGetSet u= new UserModelUseGetSet();
+//        u.setId(1L);
+//        u.setAname("a");
+            u.setiSCar(true);
+            u.isISCar();
+//
+//        // lombok和idea自动生成的set方法不一样。TODO
+//        u.setbName("b");
+//        u.setCname("c");
+//        u.setDName("d");
+        return Result.success(u);
     }
 
 }
