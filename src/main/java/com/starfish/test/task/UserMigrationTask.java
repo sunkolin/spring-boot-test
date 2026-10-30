@@ -72,17 +72,13 @@ public class UserMigrationTask implements ApplicationRunner {
 
             pageStopWatch.start("删除原表数据");
             List<Long> userIds = new ArrayList<>(users.size());
-            Date currentMaxCreateTime = null;
             for (UserEntity user : users) {
                 userIds.add(user.getId());
-                if (currentMaxCreateTime == null || (user.getCreateTime() != null && user.getCreateTime().after(currentMaxCreateTime))) {
-                    currentMaxCreateTime = user.getCreateTime();
-                }
             }
             userMapper.deleteByIds(userIds);
             pageStopWatch.stop();
 
-            lastMaxCreateTime = currentMaxCreateTime;
+            lastMaxCreateTime = users.get(users.size() - 1).getCreateTime();
             totalMigrated = totalMigrated + users.size();
             totalDeleted = totalDeleted + users.size();
 
