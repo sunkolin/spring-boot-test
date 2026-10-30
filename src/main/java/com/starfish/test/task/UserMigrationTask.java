@@ -75,8 +75,7 @@ public class UserMigrationTask implements ApplicationRunner {
             Date currentMaxCreateTime = null;
             for (UserEntity user : users) {
                 userIds.add(user.getId());
-                if (currentMaxCreateTime == null
-                        || (user.getCreateTime() != null && user.getCreateTime().after(currentMaxCreateTime))) {
+                if (currentMaxCreateTime == null || (user.getCreateTime() != null && user.getCreateTime().after(currentMaxCreateTime))) {
                     currentMaxCreateTime = user.getCreateTime();
                 }
             }
@@ -87,8 +86,7 @@ public class UserMigrationTask implements ApplicationRunner {
             totalMigrated = totalMigrated + users.size();
             totalDeleted = totalDeleted + users.size();
 
-            log.info("UserMigrationTask 迁移进度, 本页迁移{}条, 累计迁移{}条, 当前最大createTime={}",
-                    users.size(), totalMigrated, lastMaxCreateTime);
+            log.info("UserMigrationTask 迁移进度, 本页迁移{}条, 累计迁移{}条, 当前最大createTime={}",users.size(), totalMigrated, lastMaxCreateTime);
             log.info("UserMigrationTask 本页耗时:\n{}", pageStopWatch.prettyPrint());
         }
 
