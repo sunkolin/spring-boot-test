@@ -14,3 +14,10 @@ spring:
       host: 8.141.81.187
       port: 6379
       password: redis_mejHMG
+
+mybatis-plus:
+  mapper-locations: classpath*:mapper/*.xml
+
+user:
+  migration:
+    page-size: 1000
