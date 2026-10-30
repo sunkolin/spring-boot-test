@@ -84,8 +84,8 @@ public class UserMigrationTask implements ApplicationRunner {
             pageStopWatch.stop();
 
             lastMaxCreateTime = currentMaxCreateTime;
-            totalMigrated += users.size();
-            totalDeleted += users.size();
+            totalMigrated = totalMigrated + users.size();
+            totalDeleted = totalDeleted + users.size();
 
             log.info("UserMigrationTask 迁移进度, 本页迁移{}条, 累计迁移{}条, 当前最大createTime={}",
                     users.size(), totalMigrated, lastMaxCreateTime);
