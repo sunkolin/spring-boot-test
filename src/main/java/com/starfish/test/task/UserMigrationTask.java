@@ -1,7 +1,6 @@
 package com.starfish.test.task;
 
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
-import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.starfish.test.entity.UserEntity;
 import com.starfish.test.entity.UserHistoryEntity;
 import com.starfish.test.mapper.UserHistoryMapper;
@@ -16,6 +15,7 @@ import org.springframework.stereotype.Component;
 import org.springframework.util.StopWatch;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 @Slf4j
@@ -39,16 +39,19 @@ public class UserMigrationTask implements ApplicationRunner {
 
         long totalMigrated = 0;
         long totalDeleted = 0;
-        long pageNumber = 1;
+        Date lastMaxCreateTime = null;
 
         while (true) {
-            StopWatch pageStopWatch = new StopWatch("第" + pageNumber + "页迁移");
+            StopWatch pageStopWatch = new StopWatch();
 
             pageStopWatch.start("查询数据");
             LambdaQueryWrapper<UserEntity> queryWrapper = new LambdaQueryWrapper<>();
-            queryWrapper.orderByAsc(UserEntity::getId);
-            Page<UserEntity> page = userMapper.selectPage(new Page<>(pageNumber, pageSize, false), queryWrapper);
-            List<UserEntity> users = page.getRecords();
+            if (lastMaxCreateTime != null) {
+                queryWrapper.ge(UserEntity::getCreateTime, lastMaxCreateTime);
+            }
+            queryWrapper.orderByAsc(UserEntity::getCreateTime);
+            queryWrapper.last("LIMIT " + pageSize);
+            List<UserEntity> users = userMapper.selectList(queryWrapper);
             pageStopWatch.stop();
 
             if (users == null || users.isEmpty()) {
@@ -69,20 +72,24 @@ public class UserMigrationTask implements ApplicationRunner {
 
             pageStopWatch.start("删除原表数据");
             List<Long> userIds = new ArrayList<>(users.size());
+            Date currentMaxCreateTime = null;
             for (UserEntity user : users) {
                 userIds.add(user.getId());
+                if (currentMaxCreateTime == null
+                        || (user.getCreateTime() != null && user.getCreateTime().after(currentMaxCreateTime))) {
+                    currentMaxCreateTime = user.getCreateTime();
+                }
             }
             userMapper.deleteByIds(userIds);
             pageStopWatch.stop();
 
+            lastMaxCreateTime = currentMaxCreateTime;
             totalMigrated += users.size();
             totalDeleted += users.size();
 
-            log.info("UserMigrationTask 第{}页完成, 本页迁移{}条, 累计迁移{}条",
-                    pageNumber, users.size(), totalMigrated);
-            log.info("UserMigrationTask 第{}页耗时详情:\n{}", pageNumber, pageStopWatch.prettyPrint());
-
-            pageNumber++;
+            log.info("UserMigrationTask 迁移进度, 本页迁移{}条, 累计迁移{}条, 当前最大createTime={}",
+                    users.size(), totalMigrated, lastMaxCreateTime);
+            log.info("UserMigrationTask 本页耗时:\n{}", pageStopWatch.prettyPrint());
         }
 
         totalStopWatch.stop();
