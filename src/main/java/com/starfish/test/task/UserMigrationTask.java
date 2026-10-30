@@ -64,7 +64,6 @@ public class UserMigrationTask implements ApplicationRunner {
             for (UserEntity user : users) {
                 UserHistoryEntity history = new UserHistoryEntity();
                 BeanUtils.copyProperties(user, history);
-                history.setId(null);
                 historyList.add(history);
             }
             userHistoryMapper.insert(historyList);
