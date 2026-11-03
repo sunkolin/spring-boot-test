@@ -144,10 +144,6 @@ public class UserController {
         return Result.success();
     }
 
-    /**
-     * todo 无法扫描出来
-     * @return
-     */
     @PostMapping("/api/user/get5")
     public Result<Map<String,UserModelUseLomBok>> get5() {
 //        Long userId = param.getId();
@@ -156,10 +152,6 @@ public class UserController {
         return Result.success();
     }
 
-    /**
-     * todo 无法扫描出来
-     * @return
-     */
     @PostMapping("/api/user/get6")
     public Result<List<UserModelUseLomBok>> get6() {
 //        Long userId = param.getId();
@@ -168,5 +160,28 @@ public class UserController {
         return Result.success();
     }
 
+    /**
+     * todo 无法扫描出来
+     * @return
+     */
+    @PostMapping("/api/user/get7")
+    public Result<Object> get7() {
+//        Long userId = param.getId();
+//        log.info("UserController getUser.userId={}", userId);
+//        UserEntity userEntity = userService.getUser(userId);
+        return Result.success();
+    }
+
+    /**
+     * todo 无法扫描出来 怎么办？需要先扫码这种方法，提示用户修改。
+     * @return
+     */
+    @PostMapping("/api/user/get8")
+    public Result<?> get8() {
+        Long userId = 1L;
+//        log.info("UserController getUser.userId={}", userId);
+        UserEntity userEntity = userService.getUser(userId);
+        return Result.success(userEntity);
+    }
 
 }
