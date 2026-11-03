@@ -10,6 +10,7 @@ import com.starfish.core.model.Result;
 import com.starfish.test.entity.UserEntity;
 import com.starfish.test.enumeration.ResultEnum;
 import com.starfish.test.param.GetUserParam;
+import com.starfish.test.param.TesteUserParam;
 import com.starfish.test.param.UpdateUserParam;
 import com.starfish.test.service.UserService;
 import io.swagger.v3.oas.annotations.Operation;
@@ -102,6 +103,15 @@ public class UserController {
         log.info("UserController getUser.userId={}", userId);
         UserEntity userEntity = userService.getUser(userId);
         return Result.success(userEntity);
+    }
+
+
+    @PostMapping("/api/user/get2")
+    public Result<TesteUserParam> get2(@RequestBody TesteUserParam param) {
+        Long userId = param.getId();
+        log.info("UserController getUser.userId={}", userId);
+        UserEntity userEntity = userService.getUser(userId);
+        return Result.success();
     }
 
     /**
