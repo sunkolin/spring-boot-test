@@ -42,22 +42,12 @@ public class Main {
                 String fullUrl = (baseUrl + methodUrl).replace("//", "/");
                 String source = controllerName + "#" + method.getName() + " -> " + fullUrl;
 
-                for (Class<?> paramType : method.getParameterTypes()) {
-                    if (!isBasicOrCommonType(paramType)) {
-                        typeSources.computeIfAbsent(paramType, k -> new LinkedHashSet<>()).add(source);
-                    }
+                for (java.lang.reflect.Type genericParamType : method.getGenericParameterTypes()) {
+                    collectTypes(genericParamType, source, typeSources);
                 }
 
                 Type returnType = method.getGenericReturnType();
-                if (returnType instanceof ParameterizedType pt) {
-                    for (Type arg : pt.getActualTypeArguments()) {
-                        if (arg instanceof Class<?> cls && !isBasicOrCommonType(cls)) {
-                            typeSources.computeIfAbsent(cls, k -> new LinkedHashSet<>()).add(source);
-                        }
-                    }
-                } else if (returnType instanceof Class<?> cls && !isBasicOrCommonType(cls)) {
-                    typeSources.computeIfAbsent(cls, k -> new LinkedHashSet<>()).add(source);
-                }
+                collectTypes(returnType, source, typeSources);
             }
         }
 
@@ -106,6 +96,16 @@ public class Main {
         RequestMapping rm = AnnotationUtils.findAnnotation(method, RequestMapping.class);
         if (rm != null && rm.value().length > 0) return rm.value()[0];
         return "";
+    }
+
+    private static void collectTypes(Type type, String source, Map<Type, Set<String>> typeSources) {
+        if (type instanceof ParameterizedType pt) {
+            for (Type arg : pt.getActualTypeArguments()) {
+                collectTypes(arg, source, typeSources);
+            }
+        } else if (type instanceof Class<?> cls && !isBasicOrCommonType(cls)) {
+            typeSources.computeIfAbsent(cls, k -> new LinkedHashSet<>()).add(source);
+        }
     }
 
     private static boolean isBasicOrCommonType(Type type) {

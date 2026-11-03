@@ -20,6 +20,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -143,6 +144,10 @@ public class UserController {
         return Result.success();
     }
 
+    /**
+     * todo 无法扫描出来
+     * @return
+     */
     @PostMapping("/api/user/get5")
     public Result<Map<String,UserModelUseLomBok>> get5() {
 //        Long userId = param.getId();
@@ -150,5 +155,18 @@ public class UserController {
 //        UserEntity userEntity = userService.getUser(userId);
         return Result.success();
     }
+
+    /**
+     * todo 无法扫描出来
+     * @return
+     */
+    @PostMapping("/api/user/get6")
+    public Result<List<UserModelUseLomBok>> get6() {
+//        Long userId = param.getId();
+//        log.info("UserController getUser.userId={}", userId);
+//        UserEntity userEntity = userService.getUser(userId);
+        return Result.success();
+    }
+
 
 }
