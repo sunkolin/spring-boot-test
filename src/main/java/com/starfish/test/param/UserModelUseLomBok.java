@@ -3,6 +3,7 @@ package com.starfish.test.param;
 import lombok.Data;
 
 import java.io.Serializable;
+import java.util.Date;
 
 @Data
 public class UserModelUseLomBok implements Serializable {
@@ -48,5 +49,9 @@ public class UserModelUseLomBok implements Serializable {
      * 首字母大写，连续3个大写
      */
     private String FNName;
+
+    private Date createTime;
+
+    private Date updateTime;
 
 }
