@@ -3,6 +3,7 @@ package com.starfish.test.entity;
 import lombok.Data;
 
 import java.io.Serializable;
+import java.util.Date;
 
 @Data
 public class UserModelUseLomBok implements Serializable {
@@ -52,5 +53,9 @@ public class UserModelUseLomBok implements Serializable {
     private boolean iSCar;
 
     private boolean tSql;
+
+    private Date createTime;
+
+    private Date updateTime;
 
 }
