@@ -20,6 +20,8 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.util.Map;
+
 /**
  * UserController
  *
@@ -138,6 +140,14 @@ public class UserController {
         Long userId = param.getId();
         log.info("UserController getUser.userId={}", userId);
         UserEntity userEntity = userService.getUser(userId);
+        return Result.success();
+    }
+
+    @PostMapping("/api/user/get5")
+    public Result<Map<String,UserModelUseLomBok>> get5() {
+//        Long userId = param.getId();
+//        log.info("UserController getUser.userId={}", userId);
+//        UserEntity userEntity = userService.getUser(userId);
         return Result.success();
     }
 

@@ -29,16 +29,22 @@ public class Main {
             return;
         }
 
-        Set<Type> paramTypes = new LinkedHashSet<>();
-        Set<Type> returnTypes = new LinkedHashSet<>();
+        Map<Type, Set<String>> typeSources = new LinkedHashMap<>();
 
         for (Class<?> controller : controllerClasses) {
+            String baseUrl = getRequestMappingBase(controller);
+            String controllerName = controller.getSimpleName();
+
             for (Method method : controller.getDeclaredMethods()) {
                 if (!isMappingMethod(method)) continue;
 
+                String methodUrl = getMappingUrl(method);
+                String fullUrl = (baseUrl + methodUrl).replace("//", "/");
+                String source = controllerName + "#" + method.getName() + " -> " + fullUrl;
+
                 for (Class<?> paramType : method.getParameterTypes()) {
                     if (!isBasicOrCommonType(paramType)) {
-                        paramTypes.add(paramType);
+                        typeSources.computeIfAbsent(paramType, k -> new LinkedHashSet<>()).add(source);
                     }
                 }
 
@@ -46,28 +52,26 @@ public class Main {
                 if (returnType instanceof ParameterizedType pt) {
                     for (Type arg : pt.getActualTypeArguments()) {
                         if (arg instanceof Class<?> cls && !isBasicOrCommonType(cls)) {
-                            returnTypes.add(cls);
+                            typeSources.computeIfAbsent(cls, k -> new LinkedHashSet<>()).add(source);
                         }
                     }
                 } else if (returnType instanceof Class<?> cls && !isBasicOrCommonType(cls)) {
-                    returnTypes.add(cls);
+                    typeSources.computeIfAbsent(cls, k -> new LinkedHashSet<>()).add(source);
                 }
             }
         }
 
         System.out.println("========== 扫描结果 ==========");
         System.out.println("找到 " + controllerClasses.size() + " 个 Controller");
-        System.out.println("入参类型: " + paramTypes.size() + " 种");
-        System.out.println("出参类型: " + returnTypes.size() + " 种");
+        System.out.println("入参+出参类型: " + typeSources.size() + " 种");
 
-        System.out.println("\n========== 入参类型 Jackson2 vs Jackson3 ==========");
-        for (Type type : paramTypes) {
-            testType(type);
-        }
-
-        System.out.println("\n========== 出参类型 Jackson2 vs Jackson3 ==========");
-        for (Type type : returnTypes) {
-            testType(type);
+        System.out.println("\n========== Jackson2 vs Jackson3 key 对比 ==========");
+        boolean first = true;
+        for (Map.Entry<Type, Set<String>> entry : typeSources.entrySet()) {
+            if (!first) System.out.println();
+            first = false;
+            System.out.println("  来源接口: " + String.join(" | ", entry.getValue()));
+            testType(entry.getKey());
         }
     }
 
@@ -78,6 +82,30 @@ public class Main {
                AnnotationUtils.findAnnotation(method, DeleteMapping.class) != null ||
                AnnotationUtils.findAnnotation(method, PatchMapping.class) != null ||
                AnnotationUtils.findAnnotation(method, RequestMapping.class) != null;
+    }
+
+    private static String getRequestMappingBase(Class<?> controller) {
+        RequestMapping rm = AnnotationUtils.findAnnotation(controller, RequestMapping.class);
+        if (rm != null && rm.value().length > 0) {
+            return rm.value()[0];
+        }
+        return "";
+    }
+
+    private static String getMappingUrl(Method method) {
+        GetMapping gm = AnnotationUtils.findAnnotation(method, GetMapping.class);
+        if (gm != null && gm.value().length > 0) return gm.value()[0];
+        PostMapping pm = AnnotationUtils.findAnnotation(method, PostMapping.class);
+        if (pm != null && pm.value().length > 0) return pm.value()[0];
+        PutMapping pum = AnnotationUtils.findAnnotation(method, PutMapping.class);
+        if (pum != null && pum.value().length > 0) return pum.value()[0];
+        DeleteMapping dm = AnnotationUtils.findAnnotation(method, DeleteMapping.class);
+        if (dm != null && dm.value().length > 0) return dm.value()[0];
+        PatchMapping pam = AnnotationUtils.findAnnotation(method, PatchMapping.class);
+        if (pam != null && pam.value().length > 0) return pam.value()[0];
+        RequestMapping rm = AnnotationUtils.findAnnotation(method, RequestMapping.class);
+        if (rm != null && rm.value().length > 0) return rm.value()[0];
+        return "";
     }
 
     private static boolean isBasicOrCommonType(Type type) {
@@ -160,7 +188,7 @@ public class Main {
 
             boolean same = keys2.equals(keys3);
 
-            System.out.println("\n【" + clazz.getSimpleName() + "】");
+            System.out.println("【" + clazz.getSimpleName() + "】");
             System.out.println("  Jackson2 keys: " + sortAndJoin(keys2));
             System.out.println("  Jackson3 keys: " + sortAndJoin(keys3));
 
