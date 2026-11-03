@@ -10,7 +10,7 @@ import lombok.Data;
  * @since 2025-11-17
  */
 @Data
-public class TesteUserParam {
+public class TestUserParam {
 
     private Long id;
 

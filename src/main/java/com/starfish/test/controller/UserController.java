@@ -9,9 +9,7 @@ import com.starfish.core.exception.CustomException;
 import com.starfish.core.model.Result;
 import com.starfish.test.entity.UserEntity;
 import com.starfish.test.enumeration.ResultEnum;
-import com.starfish.test.param.GetUserParam;
-import com.starfish.test.param.TesteUserParam;
-import com.starfish.test.param.UpdateUserParam;
+import com.starfish.test.param.*;
 import com.starfish.test.service.UserService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -107,7 +105,7 @@ public class UserController {
 
 
     @PostMapping("/api/user/get2")
-    public Result<TesteUserParam> get2(@RequestBody TesteUserParam param) {
+    public Result<TestUserParam> get2(@RequestBody TestUserParam param) {
         Long userId = param.getId();
         log.info("UserController getUser.userId={}", userId);
         UserEntity userEntity = userService.getUser(userId);
@@ -124,6 +122,22 @@ public class UserController {
         UserEntity userEntity = new UserEntity();
         BeanUtils.copyProperties(param, userEntity);
         userService.update(userEntity);
+        return Result.success();
+    }
+
+    @PostMapping("/api/user/get3")
+    public Result<UserModelUseGetSet> get3(@RequestBody UserModelUseGetSet param) {
+        Long userId = param.getId();
+        log.info("UserController getUser.userId={}", userId);
+        UserEntity userEntity = userService.getUser(userId);
+        return Result.success();
+    }
+
+    @PostMapping("/api/user/get4")
+    public Result<UserModelUseLomBok> get2(@RequestBody UserModelUseLomBok param) {
+        Long userId = param.getId();
+        log.info("UserController getUser.userId={}", userId);
+        UserEntity userEntity = userService.getUser(userId);
         return Result.success();
     }
 
