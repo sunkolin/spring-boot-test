@@ -100,17 +100,17 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public UserEntity getUser(Long userId) {
-        String key = "starfish:spring-boot-test:" + userId;
-        if (redisTemplate.hasKey(key)) {
-            Object result = redisTemplate.opsForValue().get(key);
-            return result != null ? (UserEntity) result : null;
-        } else {
+//        String key = "starfish:spring-boot-test:" + userId;
+//        if (redisTemplate.hasKey(key)) {
+//            Object result = redisTemplate.opsForValue().get(key);
+//            return result != null ? (UserEntity) result : null;
+//        } else {
             UserEntity userEntity = userMapper.selectById(userId);
             // 缓存一个小时
-            Duration duration = Duration.ofSeconds(60 * 60);
-            redisTemplate.opsForValue().set(key, userEntity, duration);
+//            Duration duration = Duration.ofSeconds(60 * 60);
+//            redisTemplate.opsForValue().set(key, userEntity, duration);
             return userEntity;
-        }
+//        }
     }
 
     @Override

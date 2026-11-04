@@ -97,6 +97,7 @@ public class UserController {
      * @param param 参数
      * @return 结果
      */
+    @RequireLogin(false)
     @Operation(summary = "查询用户接口", description = "查询用户接口")
     @PostMapping("/api/user/get")
     public Result<UserEntity> get(@RequestBody GetUserParam param) {
