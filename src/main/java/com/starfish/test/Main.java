@@ -13,7 +13,10 @@ import java.util.*;
 
 public class Main {
 
+    private static final String BASE_PACKAGE = Main.class.getPackage().getName();
+
     private static final ObjectMapper j2Mapper = new ObjectMapper();
+
     private static final tools.jackson.databind.ObjectMapper j3Mapper = new tools.jackson.databind.ObjectMapper();
 
     public static void main(String[] args) {
@@ -21,8 +24,8 @@ public class Main {
     }
 
     private static void scanAndTestJackson() {
-        String basePackage = "com.starfish.test";
-        Set<Class<?>> controllerClasses = scanControllerClasses(basePackage);
+
+        Set<Class<?>> controllerClasses = scanControllerClasses(BASE_PACKAGE);
 
         if (controllerClasses.isEmpty()) {
             System.out.println("未找到任何 Controller 类");
