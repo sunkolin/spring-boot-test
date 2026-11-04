@@ -123,7 +123,6 @@ public class Main {
                cls.getName().startsWith("javax.") ||
                cls.getName().startsWith("org.springframework") ||
                cls.getName().startsWith("com.baomidou") ||
-               cls.getName().startsWith("com.github.sunkolin.starfish.core.model") ||
                Iterable.class.isAssignableFrom(cls) ||
                Map.class.isAssignableFrom(cls);
     }
