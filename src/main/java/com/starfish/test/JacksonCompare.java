@@ -11,9 +11,9 @@ import java.lang.reflect.Type;
 import java.net.URL;
 import java.util.*;
 
-public class Main {
+public class JacksonCompare {
 
-    private static final String BASE_PACKAGE = Main.class.getPackage().getName();
+    private static final String BASE_PACKAGE = JacksonCompare.class.getPackage().getName();
 
     private static final ObjectMapper j2Mapper = new ObjectMapper();
 
