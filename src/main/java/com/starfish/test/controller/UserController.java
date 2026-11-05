@@ -94,6 +94,7 @@ public class UserController {
 
     /**
      * 查询用户个人信息
+     *
      * @param param 参数
      * @return 结果
      */
@@ -107,6 +108,25 @@ public class UserController {
         return Result.success(userEntity);
     }
 
+    @RequireLogin(false)
+    @Operation(summary = "查询用户接口", description = "查询用户接口")
+    @PostMapping("/api/user/selectUserModelUseGetSet")
+    public Result<UserModelUseGetSet> get(@RequestBody UserModelUseGetSet param) {
+        Long userId = param.getId();
+        log.info("UserController getUser.userId={}", userId);
+//        UserEntity userEntity = userService.getUser(userId);
+        return Result.success(new UserModelUseGetSet());
+    }
+
+    @RequireLogin(false)
+    @Operation(summary = "查询用户接口", description = "查询用户接口")
+    @PostMapping("/api/user/selectUserUseLombok")
+    public Result<UserModelUseLomBok> get(@RequestBody UserModelUseLomBok param) {
+        Long userId = param.getId();
+        log.info("UserController getUser.userId={}", userId);
+//        UserEntity userEntity = userService.getUser(userId);
+        return Result.success(new UserModelUseLomBok());
+    }
 
     @PostMapping("/api/user/get2")
     public Result<TestUserParam> get2(@RequestBody TestUserParam param) {
@@ -118,6 +138,7 @@ public class UserController {
 
     /**
      * 修改个人信息
+     *
      * @param param 参数
      * @return 结果
      */
@@ -129,6 +150,7 @@ public class UserController {
         return Result.success();
     }
 
+    @RequireLogin(false)
     @PostMapping("/api/user/get3")
     public Result<UserModelUseGetSet> get3(@RequestBody UserModelUseGetSet param) {
         Long userId = param.getId();
@@ -137,6 +159,7 @@ public class UserController {
         return Result.success();
     }
 
+    @RequireLogin(false)
     @PostMapping("/api/user/get4")
     public Result<UserModelUseLomBok> get2(@RequestBody UserModelUseLomBok param) {
         Long userId = param.getId();
@@ -145,14 +168,16 @@ public class UserController {
         return Result.success();
     }
 
+    @RequireLogin(false)
     @PostMapping("/api/user/get5")
-    public Result<Map<String,UserModelUseLomBok>> get5() {
+    public Result<Map<String, UserModelUseLomBok>> get5() {
 //        Long userId = param.getId();
 //        log.info("UserController getUser.userId={}", userId);
 //        UserEntity userEntity = userService.getUser(userId);
         return Result.success();
     }
 
+    @RequireLogin(false)
     @PostMapping("/api/user/get6")
     public Result<List<UserModelUseLomBok>> get6() {
 //        Long userId = param.getId();
@@ -163,26 +188,44 @@ public class UserController {
 
     /**
      * todo 无法扫描出来
+     *
      * @return
      */
+    @RequireLogin(false)
     @PostMapping("/api/user/get7")
     public Result<Object> get7() {
-//        Long userId = param.getId();
+        Long userId = 1L;
 //        log.info("UserController getUser.userId={}", userId);
-//        UserEntity userEntity = userService.getUser(userId);
-        return Result.success();
+        UserEntity userEntity = userService.getUser(userId);
+        return Result.success(userEntity);
     }
 
     /**
      * todo 无法扫描出来 怎么办？需要先扫码这种方法，提示用户修改。
+     *
      * @return
      */
+    @RequireLogin(false)
     @PostMapping("/api/user/get8")
     public Result<?> get8() {
         Long userId = 1L;
 //        log.info("UserController getUser.userId={}", userId);
         UserEntity userEntity = userService.getUser(userId);
         return Result.success(userEntity);
+    }
+
+    /**
+     * todo 无法扫描出来 怎么办？需要先扫码这种方法，提示用户修改。
+     *
+     * @return
+     */
+    @RequireLogin(false)
+    @PostMapping("/api/user/get9")
+    public Result<?> get9() {
+        Long userId = 1L;
+//        log.info("UserController getUser.userId={}", userId);
+//        UserEntity userEntity = ;
+        return Result.success(userService.getUser(userId));
     }
 
 }

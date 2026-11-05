@@ -1,18 +1,34 @@
 package com.starfish.test.param;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.json.JsonMapper;
+import lombok.SneakyThrows;
 
 import java.io.Serializable;
+import java.util.Date;
 
 /**
  * 基于idea生成get set
  */
 public class UserModelUseGetSet implements Serializable {
 
+
+    @SneakyThrows
+    public static void main(String[] args) {
+        UserModelUseGetSet u= new UserModelUseGetSet();
+        u.setCreateTime(new Date());
+        JsonMapper objectMapper = new JsonMapper();
+//        objectMapper.writeValueAsString(u);
+        System.out.println(objectMapper.writeValueAsString(u));
+    }
+
     /**
      * 主键
      */
     private Long id;
+
+
 
     /**
      * 驼峰格式
@@ -48,6 +64,10 @@ public class UserModelUseGetSet implements Serializable {
      * 首字母大写，连续3个大写
      */
     private String FNName;
+
+    public String PractCode;
+
+    private Date createTime;
 
     public Long getId() {
         return id;
@@ -112,4 +132,21 @@ public class UserModelUseGetSet implements Serializable {
     public void setFNName(String FNName) {
         this.FNName = FNName;
     }
+
+    public String getPractCode() {
+        return PractCode;
+    }
+
+    public void setPractCode(String practCode) {
+        PractCode = practCode;
+    }
+
+    public Date getCreateTime() {
+        return createTime;
+    }
+
+    public void setCreateTime(Date createTime) {
+        this.createTime = createTime;
+    }
+
 }

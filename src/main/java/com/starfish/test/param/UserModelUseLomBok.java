@@ -1,17 +1,32 @@
 package com.starfish.test.param;
 
+import com.fasterxml.jackson.annotation.JsonAlias;
+import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.Data;
+import lombok.SneakyThrows;
+import tools.jackson.databind.json.JsonMapper;
 
 import java.io.Serializable;
 import java.util.Date;
 
 @Data
-public class UserModelUseLomBok implements Serializable {
+public class UserModelUseLomBok {//implements Serializable {
 
     /**
      * 主键
      */
     private Long id;
+
+    @JsonProperty("tid")
+//    @JsonAlias({"tid","tId"})
+    private String tId;
+
+    @SneakyThrows
+    public static void main(String[] args) {
+        String s = "{\"tid\":\"abc\"}";
+        System.out.println(new ObjectMapper().readValue(s,UserModelUseLomBok.class));
+    }
 
     /**
      * 驼峰格式
