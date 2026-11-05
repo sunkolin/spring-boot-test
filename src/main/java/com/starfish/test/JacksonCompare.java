@@ -42,24 +42,17 @@ public class JacksonCompare {
     private static final tools.jackson.databind.ObjectMapper j3Mapper = new tools.jackson.databind.ObjectMapper();
 
     public static void main(String[] args) {
-        // 对于controller中有泛型Object和？通配符的情况，无法处理需要提示处理。todo
-
-        // 扫描controller类
-        scanAndTestJackson();
-
-        // 扫描所有entity，model,vo,param,result,request,response,entity,dto,domain,DO，POJO，PO类，
-        // 对于没有在controller中扫描出来的实体。
-        //  对于Jackson2和Jackson3下转json结果不一致的情况提示出来，需要提示出来，让用户自己确认。todo
-
+        Set<Class<?>> controllerTypes = scanAndTestJackson();
+        scanUnreferencedBeans(controllerTypes);
     }
 
-    private static void scanAndTestJackson() {
+    private static Set<Class<?>> scanAndTestJackson() {
 
         Set<Class<?>> controllerClasses = scanControllerClasses(BASE_PACKAGE);
 
         if (controllerClasses.isEmpty()) {
             System.out.println("未找到任何 Controller 类");
-            return;
+            return Collections.emptySet();
         }
 
         Map<Type, Set<String>> typeSources = new LinkedHashMap<>();
@@ -107,6 +100,12 @@ public class JacksonCompare {
             System.out.println("  来源接口: " + String.join(" | ", entry.getValue()));
             testType(entry.getKey());
         }
+
+        Set<Class<?>> result = new LinkedHashSet<>();
+        for (Type t : typeSources.keySet()) {
+            if (t instanceof Class<?> cls) result.add(cls);
+        }
+        return result;
     }
 
     private static boolean isMappingMethod(Method method) {
@@ -225,6 +224,133 @@ public class JacksonCompare {
                 } catch (Exception ignored) {
                 }
             }
+        }
+    }
+
+    private static void scanUnreferencedBeans(Set<Class<?>> controllerTypes) {
+        Set<Class<?>> allBeanClasses = scanBeanClasses(BASE_PACKAGE);
+
+        if (allBeanClasses.isEmpty()) {
+            System.out.println("\n========== 未使用的 Bean 对比 ==========");
+            System.out.println("未找到任何 Bean 类（BEAN_PACKAGE_LIST: " + BEAN_PACKAGE_LIST + "）");
+            return;
+        }
+
+        Set<Class<?>> unreferenced = new LinkedHashSet<>(allBeanClasses);
+        unreferenced.removeAll(controllerTypes);
+
+        System.out.println("\n========== 未使用的 Bean 对比 ==========");
+        System.out.println("Bean 包下共 " + allBeanClasses.size() + " 个类");
+        System.out.println("Controller 中已引用: " + (allBeanClasses.size() - unreferenced.size()) + " 个");
+        System.out.println("未被 Controller 引用: " + unreferenced.size() + " 个");
+
+        if (unreferenced.isEmpty()) {
+            System.out.println("✅ 所有 Bean 类都已在 Controller 中使用");
+            return;
+        }
+
+        System.out.println("\n未被引用的 Bean 类 Jackson2 vs Jackson3 key 对比:");
+        boolean first = true;
+        int inconsistentCount = 0;
+        for (Class<?> cls : unreferenced) {
+            if (!first) System.out.println();
+            first = false;
+            boolean consistent = isJacksonConsistent(cls);
+            if (!consistent) inconsistentCount++;
+            testType(cls);
+        }
+
+        if (inconsistentCount > 0) {
+            System.out.println("\n⚠️  其中 " + inconsistentCount + " 个未被引用的 Bean 在 Jackson2/Jackson3 下 key 不一致");
+            System.out.println("  💡 这些类不在 Controller 入参/出参中，但建议手动确认字段 key 是否符合预期");
+        } else {
+            System.out.println("\n✅ 所有未被引用的 Bean 在 Jackson2/Jackson3 下 key 一致");
+        }
+    }
+
+    private static Set<Class<?>> scanBeanClasses(String basePackage) {
+        Set<Class<?>> beans = new LinkedHashSet<>();
+        String packagePath = basePackage.replace('.', '/');
+
+        try {
+            ClassLoader classLoader = Thread.currentThread().getContextClassLoader();
+            Enumeration<URL> resources = classLoader.getResources(packagePath);
+
+            while (resources.hasMoreElements()) {
+                URL resource = resources.nextElement();
+                File directory = new File(resource.getFile());
+                findBeanClasses(directory, basePackage, beans);
+            }
+        } catch (Exception ignored) {
+        }
+
+        return beans;
+    }
+
+    private static void findBeanClasses(File directory, String packageName, Set<Class<?>> beans) {
+        if (!directory.exists()) return;
+
+        File[] files = directory.listFiles();
+        if (files == null) return;
+
+        boolean matchPackage = isBeanPackage(packageName);
+
+        for (File file : files) {
+            if (file.isDirectory()) {
+                findBeanClasses(file, packageName + "." + file.getName(), beans);
+            } else if (matchPackage && file.getName().endsWith(".class") && !file.getName().contains("$")) {
+                try {
+                    String className = packageName + "." + file.getName().replace(".class", "");
+                    Class<?> clazz = Class.forName(className);
+                    if (!isBasicOrCommonType(clazz) && !clazz.isInterface() && !clazz.isEnum()) {
+                        beans.add(clazz);
+                    }
+                } catch (Exception ignored) {
+                }
+            }
+        }
+    }
+
+    private static boolean isBeanPackage(String packageName) {
+        for (String suffix : BEAN_PACKAGE_LIST) {
+            if (packageName.contains(suffix)) return true;
+        }
+        return false;
+    }
+
+    private static boolean isJacksonConsistent(Class<?> clazz) {
+        try {
+            Object instance = createInstance(clazz);
+            if (instance == null) return true;
+            String json2 = j2Mapper.writeValueAsString(instance);
+            String json3 = j3Mapper.writeValueAsString(instance);
+            return extractKeys(json2).equals(extractKeys(json3));
+        } catch (Exception e) {
+            return true;
+        }
+    }
+
+    private static void printJacksonDiff(Class<?> clazz) {
+        try {
+            Object instance = createInstance(clazz);
+            if (instance == null) {
+                System.out.println("    无法实例化，跳过详细对比");
+                return;
+            }
+            String json2 = j2Mapper.writeValueAsString(instance);
+            String json3 = j3Mapper.writeValueAsString(instance);
+            Set<String> keys2 = extractKeys(json2);
+            Set<String> keys3 = extractKeys(json3);
+            Set<String> onlyInJ2 = new HashSet<>(keys2);
+            onlyInJ2.removeAll(keys3);
+            Set<String> onlyInJ3 = new HashSet<>(keys3);
+            onlyInJ3.removeAll(keys2);
+            System.out.println("    Jackson2 keys: " + sortAndJoin(keys2));
+            System.out.println("    Jackson3 keys: " + sortAndJoin(keys3));
+            if (!onlyInJ2.isEmpty()) System.out.println("    Jackson2 独有: " + sortAndJoin(onlyInJ2));
+            if (!onlyInJ3.isEmpty()) System.out.println("    Jackson3 独有: " + sortAndJoin(onlyInJ3));
+        } catch (Exception e) {
+            System.out.println("    序列化失败: " + e.getMessage());
         }
     }
 
