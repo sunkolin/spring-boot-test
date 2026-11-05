@@ -31,6 +31,7 @@ public class JacksonCompare {
             ".request",
             ".response",
             ".domain",
+            ".do",
             ".dto",
             ".po",
             ".bo",
