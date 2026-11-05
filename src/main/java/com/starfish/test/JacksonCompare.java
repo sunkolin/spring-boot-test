@@ -2,6 +2,7 @@ package com.starfish.test;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.springframework.core.annotation.AnnotationUtils;
+import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
 import java.io.File;
@@ -219,7 +220,7 @@ public class JacksonCompare {
                 try {
                     String className = packageName + "." + file.getName().replace(".class", "");
                     Class<?> clazz = Class.forName(className);
-                    if (AnnotationUtils.findAnnotation(clazz, RestController.class) != null) {
+                    if (AnnotationUtils.findAnnotation(clazz, Controller.class) != null) {
                         controllers.add(clazz);
                     }
                 } catch (Exception ignored) {
