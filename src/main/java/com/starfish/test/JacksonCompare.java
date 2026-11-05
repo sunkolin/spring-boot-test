@@ -16,12 +16,41 @@ public class JacksonCompare {
 
     private static final String BASE_PACKAGE = JacksonCompare.class.getPackage().getName();
 
+    /**
+     * Bean所在包，如果项目中有特殊包，请在这里加 TODO
+     */
+    private static final List<String> BEAN_PACKAGE_LIST = Arrays.asList(
+            ".entity",
+            ".model",
+            ".vo",
+            ".param",
+            ".query",
+            ".res",
+            ".req",
+            ".result",
+            ".request",
+            ".response",
+            ".domain",
+            ".dto",
+            ".po",
+            ".bo",
+            ".pojo"
+    );
+
     private static final ObjectMapper j2Mapper = new ObjectMapper();
 
     private static final tools.jackson.databind.ObjectMapper j3Mapper = new tools.jackson.databind.ObjectMapper();
 
     public static void main(String[] args) {
+        // 对于controller中有泛型Object和？通配符的情况，无法处理需要提示处理。todo
+
+        // 扫描controller类
         scanAndTestJackson();
+
+        // 扫描所有entity，model,vo,param,result,request,response,entity,dto,domain,DO，POJO，PO类，
+        // 对于没有在controller中扫描出来的实体。
+        //  对于Jackson2和Jackson3下转json结果不一致的情况提示出来，需要提示出来，让用户自己确认。todo
+
     }
 
     private static void scanAndTestJackson() {
