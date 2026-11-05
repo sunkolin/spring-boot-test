@@ -8,6 +8,7 @@ import java.io.File;
 import java.lang.reflect.Method;
 import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
+import java.lang.reflect.WildcardType;
 import java.net.URL;
 import java.util.*;
 
@@ -33,6 +34,7 @@ public class JacksonCompare {
         }
 
         Map<Type, Set<String>> typeSources = new LinkedHashMap<>();
+        List<String> warnings = new ArrayList<>();
 
         for (Class<?> controller : controllerClasses) {
             String baseUrl = getRequestMappingBase(controller);
@@ -51,12 +53,22 @@ public class JacksonCompare {
 
                 Type returnType = method.getGenericReturnType();
                 collectTypes(returnType, source, typeSources);
+
+                checkAmbiguousReturnType(returnType, source, warnings);
             }
         }
 
         System.out.println("========== 扫描结果 ==========");
         System.out.println("找到 " + controllerClasses.size() + " 个 Controller");
         System.out.println("入参+出参类型: " + typeSources.size() + " 种");
+
+        if (!warnings.isEmpty()) {
+            System.out.println("\n⚠️  发现 " + warnings.size() + " 处返回类型不明确，无法扫描到实际业务模型:");
+            for (String w : warnings) {
+                System.out.println("  ⚠️  " + w);
+            }
+            System.out.println("  💡 建议将 Result<?> / Result<Object> 改为具体类型，如 Result<UserEntity>");
+        }
 
         System.out.println("\n========== Jackson2 vs Jackson3 key 对比 ==========");
         boolean first = true;
@@ -125,6 +137,24 @@ public class JacksonCompare {
                cls.getName().startsWith("com.baomidou") ||
                Iterable.class.isAssignableFrom(cls) ||
                Map.class.isAssignableFrom(cls);
+    }
+
+    private static void checkAmbiguousReturnType(Type returnType, String source, List<String> warnings) {
+        if (!(returnType instanceof ParameterizedType pt)) return;
+
+        for (Type arg : pt.getActualTypeArguments()) {
+            if (arg instanceof WildcardType) {
+                warnings.add(source + " 返回类型: " + returnType + " (通配符 ? 无法推断)");
+                return;
+            }
+            if (arg instanceof Class<?> cls && cls == Object.class) {
+                warnings.add(source + " 返回类型: " + returnType + " (Object 无法推断)");
+                return;
+            }
+            if (arg instanceof ParameterizedType nested) {
+                checkAmbiguousReturnType(nested, source, warnings);
+            }
+        }
     }
 
     private static Set<Class<?>> scanControllerClasses(String basePackage) {
