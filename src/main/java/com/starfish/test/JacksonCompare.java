@@ -15,7 +15,13 @@ import java.util.*;
 
 public class JacksonCompare {
 
-    private static final String BASE_PACKAGE = JacksonCompare.class.getPackage().getName();
+    /**
+     * Bean所在包，如果项目中有特殊包，请在这里加 TODO
+     */
+    private static final List<String> CONTROLLER_PACKAGE_LIST = Arrays.asList(
+            ".controller",
+            ".web"
+    );
 
     /**
      * Bean所在包，如果项目中有特殊包，请在这里加 TODO
@@ -38,6 +44,8 @@ public class JacksonCompare {
             ".bo",
             ".pojo"
     );
+
+    private static final String BASE_PACKAGE = JacksonCompare.class.getPackage().getName();
 
     private static final ObjectMapper j2Mapper = new ObjectMapper();
 
@@ -213,10 +221,12 @@ public class JacksonCompare {
         File[] files = directory.listFiles();
         if (files == null) return;
 
+        boolean matchPackage = isControllerPackage(packageName);
+
         for (File file : files) {
             if (file.isDirectory()) {
                 findControllers(file, packageName + "." + file.getName(), controllers);
-            } else if (file.getName().endsWith(".class") && !file.getName().contains("$")) {
+            } else if (matchPackage && file.getName().endsWith(".class") && !file.getName().contains("$")) {
                 try {
                     String className = packageName + "." + file.getName().replace(".class", "");
                     Class<?> clazz = Class.forName(className);
@@ -227,6 +237,13 @@ public class JacksonCompare {
                 }
             }
         }
+    }
+
+    private static boolean isControllerPackage(String packageName) {
+        for (String suffix : CONTROLLER_PACKAGE_LIST) {
+            if (packageName.contains(suffix)) return true;
+        }
+        return false;
     }
 
     private static void scanUnreferencedBeans(Set<Class<?>> controllerTypes) {
