@@ -13,3 +13,7 @@ spring:
       host: 8.141.81.187
       port: 6379
       password: redis_mejHMG
+
+management:
+  server:
+    port: -1
