@@ -14,6 +14,15 @@ spring:
       port: 6379
       password: redis_mejHMG
 
+starfish:
+  minio:
+    enabled: true
+    endpoint: https://minio.sunkolin.xyz:16666
+    accessKey: BKfI5z0KIfzzGaMuFGed
+    secretKey: 0JJYSQ1A3xF6VLlxyWfTJf8Vk7BnQK6W0nA1OzFa
+    bucketName: mybucket
+    expire: 3600
+
 management:
   server:
     port: -1
