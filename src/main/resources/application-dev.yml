@@ -1,6 +1,5 @@
 server:
   port: 8080
-
 spring:
   application:
     name: spring-boot-test
@@ -14,3 +13,11 @@ spring:
       host: 8.141.81.187
       port: 6379
       password: redis_mejHMG
+starfish:
+  rustfs:
+    enabled: true
+    endpoint: https://rustfs.sunkolin.xyz:16666
+    accessKey: BKfI5z0KIfzzGaMuFGed
+    secretKey: 0JJYSQ1A3xF6VLlxyWfTJf8Vk7BnQK6W0nA1OzFa
+    bucketName: mybucket
+    expire: 3600
